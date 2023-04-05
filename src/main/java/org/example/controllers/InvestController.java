@@ -20,7 +20,7 @@ import java.util.List;
 @Controller
 public class InvestController {
 
-    private final static String token = "t.5hQppYOnC64WLP9EMYVuL72f0nZYDY6ejwUfK6-IXcaolRpIw6RGBcoQ1lxSkcLvU9scg__bUEZwAwiDdZL3uA";
+    private final static String token = "";
     private Invest invest;
 
     @Autowired
