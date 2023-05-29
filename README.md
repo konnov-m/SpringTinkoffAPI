@@ -1,6 +1,6 @@
 # SpringTinkoffAPI
 Команды для создания базы данных:
-
+```
 CREATE DATABASE tinkoff;
 
 CREATE TABLE users
@@ -25,3 +25,4 @@ CREATE TABLE users_roles
  foreign key(user_id) references users(id),
  foreign key(role_id) references roles(id)
 );
+```
