@@ -1,6 +1,6 @@
 # SpringTinkoffAPI
 Команды для создания базы данных:
-```
+```sql
 CREATE DATABASE tinkoff;
 
 CREATE TABLE users
