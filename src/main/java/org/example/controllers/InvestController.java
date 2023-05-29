@@ -4,6 +4,8 @@ import org.example.Invest;
 
 import org.example.dao.UserDao;
 import org.example.models.Search;
+import org.example.models.User;
+import org.example.services.UserService;
 import org.example.utils.PriceInstruments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,19 +18,25 @@ import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.InvestApi;
 
+import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 
 @Controller
 public class InvestController {
-
-    private final static String token = "t.689sori3m0JEHD86Rejwl7Ewzp_53AD_TmuMFE8t7qWfoIJx2FNK9dWnCKCkzsT0iL-Plwt_tCljZVGcr4bqWQ";
     private Invest invest;
     private UserDao userDao;
+
+    private UserService userService;
 
     @Autowired
     public InvestController(Invest invest) {
         this.invest = invest;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
     @Autowired
@@ -42,8 +50,10 @@ public class InvestController {
     }
 
     @GetMapping("/share")
-    public String show(@RequestParam(value = "search") String shareName, Model model) {
-        InvestApi api = invest.getSandBoxApi(token);
+    public String show(@RequestParam(value = "search") String shareName, Model model, Principal principal) {
+        User user = userService.findByUsername(principal.getName());
+
+        InvestApi api = invest.getSandBoxApi(user.getToken());
 
         Share share = api.getInstrumentsService().getAllSharesSync().stream().
                                         filter(s -> s.getTicker().equals(shareName)).findFirst().orElse(null);
@@ -56,6 +66,7 @@ public class InvestController {
 
         model.addAttribute("share", share);
         model.addAttribute("price", PriceInstruments.priceToString(price, share.getCurrency()));
+        model.addAttribute("user", user);
         return "show";
     }
 
