@@ -27,9 +27,21 @@
       <label for="Password" class="form-label">Password</label>
       <input class="form-control" id="password" aria-describedby="stockHelp" th:field="*{password}">
 
+
     </div>
-    <button type="submit" class="btn btn-primary">Log in</button>
+
+    <div class="mb-3">
+      <button type="submit" class="btn btn-primary">Log in</button>
+    </div>
+
   </form>
+
+  <div class="mb-3">
+    <form th:action="@{/signup}">
+      <input class="btn btn-dark" type="submit" value="Sign up" />
+    </form>
+  </div>
+
 
 </div>
 

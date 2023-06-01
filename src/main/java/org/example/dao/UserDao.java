@@ -13,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserDao {
 
 
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
+
 
     {
         sessionFactory = HibernateUtils.buildSessionFactory(User.class, Role.class);
@@ -39,10 +40,12 @@ public class UserDao {
             query.setParameter("name", username);
 
             User selected = (User) query.uniqueResult();
+            session.getTransaction().commit();
             return selected;
         }
     }
 
+    @Transactional
     public void create(User user) {
         try (Session session = sessionFactory.openSession()) {
             session.getTransaction().begin();
@@ -57,7 +60,6 @@ public class UserDao {
             session.merge(user);
             session.getTransaction().commit();
         }
-
     }
 
     public void delete(int id) {

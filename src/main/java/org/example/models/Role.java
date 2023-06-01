@@ -2,7 +2,8 @@ package org.example.models;
 
 import jakarta.persistence.*;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "roles")
@@ -14,11 +15,15 @@ public class Role {
 
     private String name;
 
-    @ManyToMany(fetch=FetchType.EAGER)
-    @JoinTable(name = "users_roles",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Collection<Role> users;
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
+    private List<User> users;
+
+    public void addUser(User user) {
+        if (users == null) {
+            users = new ArrayList<>();
+        }
+        users.add(user);
+    }
 
     public Long getId() {
         return id;
@@ -34,6 +39,10 @@ public class Role {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 
     @Override
