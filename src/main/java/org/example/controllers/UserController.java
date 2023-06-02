@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.security.Principal;
 
 @Controller
 public class UserController {
@@ -48,7 +49,8 @@ public class UserController {
     @GetMapping("/login")
     public String login(@RequestParam(value = "error", required = false) String error,
                         @RequestParam(value = "logout", required = false) String logout,
-                        Model model) {
+                        Model model, Principal principal) {
+        model.addAttribute("isAuth", principal != null);
         model.addAttribute("user",new User());
         model.addAttribute("error", error != null);
         model.addAttribute("logout", logout != null);

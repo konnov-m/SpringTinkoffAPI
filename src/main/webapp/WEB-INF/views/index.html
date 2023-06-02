@@ -11,6 +11,8 @@
 </head>
 <body>
 
+<div th:replace="header :: content"></div>
+
 <div class="container">
 
     <form method="get" th:action="@{/share}" th:object="${search}">
@@ -19,7 +21,7 @@
             <input class="form-control" id="shareName" aria-describedby="stockHelp" th:field="*{search}">
             <div id="stockHelp" class="form-text">Search stock.</div>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Search</button>
     </form>
 
 </div>

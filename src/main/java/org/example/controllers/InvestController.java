@@ -45,12 +45,16 @@ public class InvestController {
     }
 
     @GetMapping("/")
-    public String search(@ModelAttribute("search") Search search) {
+    public String search(@ModelAttribute("search") Search search, Principal principal, Model model) {
+        model.addAttribute("isAuth", principal != null);
+
         return "index";
     }
 
     @GetMapping("/share")
     public String show(@RequestParam(value = "search") String shareName, Model model, Principal principal) {
+        model.addAttribute("isAuth", principal != null);
+
         User user = userService.findByUsername(principal.getName());
 
         InvestApi api = invest.getSandBoxApi(user.getToken());

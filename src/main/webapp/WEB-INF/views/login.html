@@ -11,6 +11,8 @@
 </head>
 <body>
 
+<div th:replace="header :: content"></div>
+
 <div class="container">
 
   <div th:if="${logout}" class="alert alert-info" role="alert">You've been logged out successfully.</div>
@@ -35,12 +37,6 @@
     </div>
 
   </form>
-
-  <div class="mb-3">
-    <form th:action="@{/signup}">
-      <input class="btn btn-dark" type="submit" value="Sign up" />
-    </form>
-  </div>
 
 
 </div>
