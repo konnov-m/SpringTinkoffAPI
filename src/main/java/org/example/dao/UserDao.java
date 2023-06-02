@@ -54,6 +54,7 @@ public class UserDao {
         }
     }
 
+    @Transactional
     public void update(User user) {
         try (Session session = sessionFactory.openSession()) {
             session.getTransaction().begin();

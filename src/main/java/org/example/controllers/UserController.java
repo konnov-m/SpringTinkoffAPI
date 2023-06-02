@@ -95,4 +95,23 @@ public class UserController {
 
         return "redirect:/";
     }
+
+    @GetMapping("/update")
+    public String updateGet(Principal principal, Model model) {
+        model.addAttribute("isAuth", principal != null);
+        model.addAttribute("user", userDao.getUser(principal.getName()));
+
+        return "update";
+    }
+
+    @PostMapping("/update")
+    public String updatePost(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "update";
+        }
+
+        userDao.update(user);
+
+        return "redirect:/update";
+    }
 }

@@ -27,6 +27,12 @@
                         <button type="submit" th:formaction="@{/signup}" class="btn btn-warning">Sign-up</button>
                     </form>
                 </div>
+                <div th:if="${isAuth}" class="text-end">
+                    <form>
+                        <button type="submit" th:formaction="@{/update}" class="btn btn-outline-light me-2">Update your profile</button>
+                        <button type="submit" th:formaction="@{/logout}" class="btn btn-danger">Logout</button>
+                    </form>
+                </div>
             </div>
         </div>
     </header>
