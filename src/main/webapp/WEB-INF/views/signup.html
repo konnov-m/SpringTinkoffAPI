@@ -29,11 +29,11 @@
       <input class="form-control" id="password" aria-describedby="stockHelp" th:field="*{password}">
       <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">password error</div>
 
-      <label for="Password" class="form-label">Email</label>
+      <label for="email" class="form-label">Email</label>
       <input class="form-control" id="email" aria-describedby="stockHelp" th:field="*{email}">
       <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">email error</div>
 
-      <label for="Password" class="form-label">Token</label>
+      <label for="token" class="form-label">Token</label>
       <input class="form-control" id="token" aria-describedby="stockHelp" th:field="*{token}">
       <div style="color:red" th:if="${#fields.hasErrors('token')}" th:errors="*{token}">token error</div>
 
