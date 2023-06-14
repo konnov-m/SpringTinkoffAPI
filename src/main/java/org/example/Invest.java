@@ -46,7 +46,7 @@ public class Invest {
 
 
         Quotation lastPrice = api.getMarketDataService().getLastPricesSync(List.of(figi)).get(0).getPrice();
-        Quotation price = Quotation.newBuilder().setUnits(lastPrice.getUnits() + 1)
+        Quotation price = Quotation.newBuilder().setUnits(lastPrice.getUnits())
                 .setNano(lastPrice.getNano()).build();
 
 

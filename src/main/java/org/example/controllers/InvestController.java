@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.tinkoff.piapi.contract.v1.*;
 import ru.tinkoff.piapi.core.InvestApi;
@@ -65,6 +66,8 @@ public class InvestController {
         model.addAttribute("share", share);
         model.addAttribute("price", PriceInstruments.priceToString(price, share.getCurrency()));
         model.addAttribute("user", user);
+        model.addAttribute("ticker", new Search(share.getTicker()));
+
         return "show";
     }
 
@@ -85,6 +88,17 @@ public class InvestController {
         model.addAttribute("positionsList", positionsList);
 
         return "account";
+    }
+
+    @PostMapping("/buy")
+    public String buyShare(@ModelAttribute("ticker") Search ticker, Principal principal, Model model) {
+        model.addAttribute("isAuth", principal != null);
+        User user = userService.findByUsername(principal.getName());
+
+        invest.buyShare(user.getToken(), ticker.getSearch(), 1);
+
+
+        return "redirect:/";
     }
 
 }
