@@ -18,9 +18,23 @@
 
 <div class="container-sm">
 
+
+
+
+
   <div class="row align-items-start">
     <div class="col">
-
+      <form th:action="@{/accounts/{id}(id=${idAcc})}">
+        <div class="mb-3">
+        <select th:field="*{idAcc}" class="form-select" aria-label="Default select example">
+          <option th:each="i:${#numbers.sequence(0, len)}" th:value="${i}" th:text="${i}">
+          </option>
+        </select>
+        </div>
+        <div class="mb-3">
+          <button type="submit" class="btn btn-primary">Choose account</button>
+        </div>
+      </form>
     </div>
     <div class="col">
       <table class="table table-striped">

@@ -11,10 +11,7 @@ import org.example.utils.PriceInstruments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ru.tinkoff.piapi.contract.v1.*;
 import ru.tinkoff.piapi.core.InvestApi;
 
@@ -76,16 +73,42 @@ public class InvestController {
         model.addAttribute("isAuth", principal != null);
         User user = userService.findByUsername(principal.getName());
 
+        List<Account> accounts = invest.getAccount(user.getToken());
+
         PositionsResponse positionsResponse = invest.getPositionsResponse(user.getToken(),
-                invest.getAccount(user.getToken()).get(0).getId());
+                accounts.get(0).getId());
 
         List<ParsePortfolioPosition> positionsList = ParsePortfolioPosition.parse(invest.getPortfolio(user.getToken(),
-                invest.getAccount(user.getToken()).get(0).getId()).getPositionsList(), invest.getSandBoxApi(user.getToken()));
+                accounts.get(0).getId()).getPositionsList(), invest.getSandBoxApi(user.getToken()));
 
         positionsList.removeIf(x -> !x.getInstrumentType().equals("share"));
 
         model.addAttribute("moneyList", positionsResponse.getMoneyList());
         model.addAttribute("positionsList", positionsList);
+        model.addAttribute("len", accounts.size()-1);
+        model.addAttribute("idAcc", 0);
+
+        return "account";
+    }
+
+    @GetMapping("/accounts/{id}")
+    public String accounts(@PathVariable int id, Model model, Principal principal) {
+        model.addAttribute("isAuth", principal != null);
+        User user = userService.findByUsername(principal.getName());
+        List<Account> accounts = invest.getAccount(user.getToken());
+
+        PositionsResponse positionsResponse = invest.getPositionsResponse(user.getToken(),
+                accounts.get(id).getId());
+
+        List<ParsePortfolioPosition> positionsList = ParsePortfolioPosition.parse(invest.getPortfolio(user.getToken(),
+                accounts.get(id).getId()).getPositionsList(), invest.getSandBoxApi(user.getToken()));
+
+        positionsList.removeIf(x -> !x.getInstrumentType().equals("share"));
+
+        model.addAttribute("moneyList", positionsResponse.getMoneyList());
+        model.addAttribute("positionsList", positionsList);
+        model.addAttribute("len", accounts.size()-1);
+        model.addAttribute("idAcc", 0);
 
         return "account";
     }
