@@ -19,14 +19,11 @@
 <div class="container-sm">
 
 
-
-
-
   <div class="row align-items-start">
     <div class="col">
-      <form th:action="@{/accounts/{id}(id=${idAcc})}">
+      <form th:method="GET" th:action="@{/accounts(id=${idAcc.id})}">
         <div class="mb-3">
-        <select th:field="*{idAcc}" class="form-select" aria-label="Default select example">
+        <select th:field="*{idAcc.id}" class="form-select">
           <option th:each="i:${#numbers.sequence(0, len)}" th:value="${i}" th:text="${i}">
           </option>
         </select>
@@ -64,7 +61,11 @@
       </table>
     </div>
     <div class="col">
-
+      <form th:method="post" th:action="@{/accounts}">
+        <div class="mb-3">
+          <button type="submit" class="btn btn-primary">Create account</button>
+        </div>
+      </form>
     </div>
   </div>
 

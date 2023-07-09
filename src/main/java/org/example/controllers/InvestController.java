@@ -3,6 +3,7 @@ package org.example.controllers;
 import org.example.Invest;
 
 import org.example.dao.UserDao;
+import org.example.models.Identifier;
 import org.example.models.Search;
 import org.example.models.User;
 import org.example.services.UserService;
@@ -68,37 +69,27 @@ public class InvestController {
         return "show";
     }
 
-    @GetMapping("/accounts")
-    public String accounts(Model model, Principal principal) {
+    @PostMapping("/accounts")
+    public String accountsPost(Model model, Principal principal) {
+
         model.addAttribute("isAuth", principal != null);
         User user = userService.findByUsername(principal.getName());
 
-        List<Account> accounts = invest.getAccount(user.getToken());
+        //Create account
+        invest.getSandBoxApi(user.getToken()).getSandboxService().openAccountSync();
 
-        PositionsResponse positionsResponse = invest.getPositionsResponse(user.getToken(),
-                accounts.get(0).getId());
-
-        List<ParsePortfolioPosition> positionsList = ParsePortfolioPosition.parse(invest.getPortfolio(user.getToken(),
-                accounts.get(0).getId()).getPositionsList(), invest.getSandBoxApi(user.getToken()));
-
-        positionsList.removeIf(x -> !x.getInstrumentType().equals("share"));
-
-        model.addAttribute("moneyList", positionsResponse.getMoneyList());
-        model.addAttribute("positionsList", positionsList);
-        model.addAttribute("len", accounts.size()-1);
-        model.addAttribute("idAcc", 0);
-
-        return "account";
+        return "redirect:/accounts";
     }
 
-    @GetMapping("/accounts/{id}")
-    public String accounts(@PathVariable int id, Model model, Principal principal) {
+    @GetMapping("/accounts")
+    public String accounts(@RequestParam(value = "id", defaultValue = "0") int id, Model model, Principal principal) {
         model.addAttribute("isAuth", principal != null);
         User user = userService.findByUsername(principal.getName());
         List<Account> accounts = invest.getAccount(user.getToken());
 
         PositionsResponse positionsResponse = invest.getPositionsResponse(user.getToken(),
                 accounts.get(id).getId());
+
 
         List<ParsePortfolioPosition> positionsList = ParsePortfolioPosition.parse(invest.getPortfolio(user.getToken(),
                 accounts.get(id).getId()).getPositionsList(), invest.getSandBoxApi(user.getToken()));
@@ -108,7 +99,7 @@ public class InvestController {
         model.addAttribute("moneyList", positionsResponse.getMoneyList());
         model.addAttribute("positionsList", positionsList);
         model.addAttribute("len", accounts.size()-1);
-        model.addAttribute("idAcc", 0);
+        model.addAttribute("idAcc", new Identifier(id));
 
         return "account";
     }
