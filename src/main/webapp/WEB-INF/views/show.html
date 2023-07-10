@@ -21,9 +21,9 @@
 </div>
 
 <div class="container">
-  <form method="post" th:action="@{/buy}" th:object="${ticker}">
-    <input class="form-control" id="password" aria-describedby="stockHelp" th:field="*{search}" type="hidden">
-    <button type="submit" class="btn btn-primary">buy</button>
+  <form th:method="POST" th:action="@{/buy}" th:object="${ticker}">
+    <input class="form-control" id="search" aria-describedby="stockHelp" th:field="*{search}" type="hidden">
+    <button type="submit" class="btn btn-primary">Buy</button>
   </form>
 </div>
 

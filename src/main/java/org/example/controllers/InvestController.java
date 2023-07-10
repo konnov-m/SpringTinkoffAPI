@@ -4,6 +4,7 @@ import org.example.Invest;
 
 import org.example.dao.UserDao;
 import org.example.models.Identifier;
+import org.example.models.Money;
 import org.example.models.Search;
 import org.example.models.User;
 import org.example.services.UserService;
@@ -12,10 +13,12 @@ import org.example.utils.PriceInstruments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.tinkoff.piapi.contract.v1.*;
 import ru.tinkoff.piapi.core.InvestApi;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
@@ -92,7 +95,7 @@ public class InvestController {
 
 
         List<ParsePortfolioPosition> positionsList = ParsePortfolioPosition.parse(invest.getPortfolio(user.getToken(),
-                accounts.get(id).getId()).getPositionsList(), invest.getSandBoxApi(user.getToken()));
+                id).getPositionsList(), invest.getSandBoxApi(user.getToken()));
 
         positionsList.removeIf(x -> !x.getInstrumentType().equals("share"));
 
@@ -113,6 +116,29 @@ public class InvestController {
 
 
         return "redirect:/";
+    }
+
+    @GetMapping("/payin")
+    public String payIn(Model model, Principal principal) {
+        model.addAttribute("isAuth", principal != null);
+
+        User user = userService.findByUsername(principal.getName());
+        List<Account> accounts = invest.getAccount(user.getToken());
+
+        model.addAttribute("Money", new Money());
+        model.addAttribute("Currencies", PriceInstruments.currencyMap.keySet());
+        model.addAttribute("len", accounts.size()-1);
+
+        return "pay";
+    }
+
+    @PostMapping("/payin")
+    public String payInPost(@ModelAttribute("Money") @Valid Money money, Model model, Principal principal, BindingResult bindingResult) {
+        User user = userService.findByUsername(principal.getName());
+
+        invest.payIn(user.getToken(), money);
+
+        return "redirect:/accounts?id=" + money.getAccountId();
     }
 
 }

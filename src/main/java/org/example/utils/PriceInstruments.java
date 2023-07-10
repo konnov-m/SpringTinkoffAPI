@@ -7,10 +7,11 @@ import java.util.Map;
 
 public class PriceInstruments {
 
-    private static Map<String, String> currencyMap = new HashMap<>();
+    public static Map<String, String> currencyMap = new HashMap<>();
 
     static {
         currencyMap.put("usd", "$");
+        currencyMap.put("rub", "Р");
     }
 
     public static String priceToString(Quotation quotation, String currency) {

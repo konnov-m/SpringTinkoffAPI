@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.models.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -29,8 +30,8 @@ public class Invest {
         return getSandBoxApi(token).getSandboxService().getPositionsSync(accountId);
     }
 
-    public PortfolioResponse getPortfolio(String token, String accountId) {
-        return getSandBoxApi(token).getSandboxService().getPortfolioSync(getAccount(token).get(0).getId());
+    public PortfolioResponse getPortfolio(String token, int accountId) {
+        return getSandBoxApi(token).getSandboxService().getPortfolioSync(getAccount(token).get(accountId).getId());
     }
 
     public void buyShare(String token, String ticker, long quantity) {
@@ -53,6 +54,15 @@ public class Invest {
         PostOrderResponse orderId = api.getSandboxService().postOrderSync(figi, quantity, price,
                 OrderDirection.ORDER_DIRECTION_BUY, acc.getId(),
                 OrderType.ORDER_TYPE_LIMIT, UUID.randomUUID().toString());
+
+
+        OrderState order = api.getSandboxService().getOrderStateSync(acc.getId(), orderId.getOrderId());
+        if (order != null ) {
+            log.info("Request with id {} is in list", order);
+        } else {
+            log.info("Request with id {} isn't in list", order);
+        }
+
     }
 
     public Share findShareByTicker(String token, String ticker) {
@@ -63,6 +73,14 @@ public class Invest {
     public Share findShareByTicker(InvestApi api, String ticker) {
         return api.getInstrumentsService().getAllSharesSync().stream().
                 filter(s -> s.getTicker().equals(ticker)).findFirst().orElse(null);
+    }
+
+    public void payIn(String token, Money money) {
+        InvestApi api = this.getSandBoxApi(token);
+
+
+        api.getSandboxService().payIn(this.getAccount(token).get(money.getAccountId()).getId(), MoneyValue.newBuilder().setUnits(money.getValue()).setCurrency(money.getCurrency()).build());
+
     }
 
 }
