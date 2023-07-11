@@ -66,13 +66,23 @@
           <td>Ticker</td>
           <td>Price</td>
           <td>Lots</td>
+          <td>Cancel order</td>
         </tr>
 
-        <tr th:each="order: ${orders}">
+        <tr th:each="order : ${orders}">
           <td th:text="${order.Ticker}" />
           <td th:text="${order.Price}" />
           <td th:text="${order.Lots}" />
+          <td>
+            <form th:method="POST" th:action="@{/accounts/cancel_order}">
+              <input class="form-control" name="orderId" id="orderId" aria-describedby="stockHelp" th:value="*{order.orderId}" type="hidden">
+              <input class="form-control" name="idAcc" id="idAcc" aria-describedby="stockHelp" th:value="*{idAcc.id}" type="hidden">
+              <button type="submit" class="btn btn-danger">Cancel</button>
+            </form>
+          </td>
         </tr>
+
+
       </table>
     </div>
     <div class="col">

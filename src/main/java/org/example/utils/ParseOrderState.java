@@ -16,6 +16,8 @@ public class ParseOrderState {
 
     private String instrumentType;
 
+    private String orderId;
+
     public static List<ParseOrderState> parseOrderStateList(List<OrderState> orders, String token) {
         List<ParseOrderState> parsed = new ArrayList<>();
 
@@ -31,10 +33,12 @@ public class ParseOrderState {
         this.price = PriceInstruments.moneyValueToString(orderState.getTotalOrderAmount(), orderState.getCurrency());
         this.lots = orderState.getLotsRequested();
         this.instrumentType = orderState.getInstrumentUid();
+        this.orderId = orderState.getOrderId();
 
         this.ticker = Invest.findTickerByFigi(figi, token);
+    }
 
-
+    public ParseOrderState() {
     }
 
     public String getFigi() {
@@ -75,6 +79,14 @@ public class ParseOrderState {
 
     public void setInstrumentType(String instrumentType) {
         this.instrumentType = instrumentType;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 
     @Override

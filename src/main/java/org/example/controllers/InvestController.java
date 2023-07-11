@@ -11,6 +11,8 @@ import org.example.services.UserService;
 import org.example.utils.ParseOrderState;
 import org.example.utils.ParsePortfolioPosition;
 import org.example.utils.PriceInstruments;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,11 +23,15 @@ import ru.tinkoff.piapi.core.InvestApi;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Controller
 public class InvestController {
+
+    static final Logger log = LoggerFactory.getLogger(InvestController.class);
+
     private Invest invest;
     private UserDao userDao;
 
@@ -105,11 +111,12 @@ public class InvestController {
 
         model.addAttribute("moneyList", positionsResponse.getMoneyList());
         model.addAttribute("positionsList", positionsList);
-        model.addAttribute("orders", orders);
+        model.addAttribute("orders", new ArrayList<>(orders));
         model.addAttribute("len", accounts.size()-1);
         model.addAttribute("idAcc", new Identifier(id));
         model.addAttribute("ordersNotNull", orders.size() != 0);
         model.addAttribute("positionsNotNull", positionsList.size() != 0);
+        model.addAttribute("order", new ParseOrderState());
 
 
         return "account";
@@ -149,4 +156,20 @@ public class InvestController {
         return "redirect:/accounts?id=" + money.getAccountId();
     }
 
+    @PostMapping("/accounts/cancel_order")
+    public String cancelOrder(@ModelAttribute("order") ParseOrderState order,
+                              @ModelAttribute("idAcc") int id, Principal principal, BindingResult bindingResult){
+        if (bindingResult.hasErrors()) {
+            return "redirect:/accounts";
+        }
+
+        log.info("id is " + id);
+
+        User user = userService.findByUsername(principal.getName());
+        Account acc = invest.getAccount(user.getToken()).get(id);
+
+        invest.cancelOrder(user.getToken(), acc.getId(), order.getOrderId());
+
+        return "redirect:/accounts";
+    }
 }

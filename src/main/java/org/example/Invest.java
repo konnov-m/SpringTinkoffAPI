@@ -1,7 +1,6 @@
 package org.example;
 
 import org.example.models.Money;
-import org.example.utils.ParseOrderState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -100,16 +99,11 @@ public class Invest {
         return ticker;
     }
 
-    public static void main(String[] args) {
-        String token = "t.689sori3m0JEHD86Rejwl7Ewzp_53AD_TmuMFE8t7qWfoIJx2FNK9dWnCKCkzsT0iL-Plwt_tCljZVGcr4bqWQ";
+    public void cancelOrder(String token, String accountId, String orderId) {
+        InvestApi api = getSandBoxApi(token);
 
-        Invest invest = new Invest();
-
-        List<OrderState> arr = invest.getOrders(token, invest.getAccount(token).get(0));
-
-        List<ParseOrderState> orders = ParseOrderState.parseOrderStateList(arr, token);
-
-        System.out.println(orders.get(0));
+        api.getSandboxService().cancelOrderSync(accountId, orderId);
+        log.info("Order canceled");
     }
 
 }
