@@ -8,6 +8,7 @@ import org.example.models.Money;
 import org.example.models.Search;
 import org.example.models.User;
 import org.example.services.UserService;
+import org.example.utils.ParseOrderState;
 import org.example.utils.ParsePortfolioPosition;
 import org.example.utils.PriceInstruments;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,20 +90,27 @@ public class InvestController {
         model.addAttribute("isAuth", principal != null);
         User user = userService.findByUsername(principal.getName());
         List<Account> accounts = invest.getAccount(user.getToken());
+        InvestApi api = invest.getSandBoxApi(user.getToken());
 
         PositionsResponse positionsResponse = invest.getPositionsResponse(user.getToken(),
                 accounts.get(id).getId());
 
 
         List<ParsePortfolioPosition> positionsList = ParsePortfolioPosition.parse(invest.getPortfolio(user.getToken(),
-                id).getPositionsList(), invest.getSandBoxApi(user.getToken()));
+                id).getPositionsList(), api, user.getToken());
+
+        List<ParseOrderState> orders = ParseOrderState.parseOrderStateList(invest.getOrders(user.getToken(), accounts.get(id)), user.getToken());
 
         positionsList.removeIf(x -> !x.getInstrumentType().equals("share"));
 
         model.addAttribute("moneyList", positionsResponse.getMoneyList());
         model.addAttribute("positionsList", positionsList);
+        model.addAttribute("orders", orders);
         model.addAttribute("len", accounts.size()-1);
         model.addAttribute("idAcc", new Identifier(id));
+        model.addAttribute("ordersNotNull", orders.size() != 0);
+        model.addAttribute("positionsNotNull", positionsList.size() != 0);
+
 
         return "account";
     }

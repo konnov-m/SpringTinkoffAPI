@@ -15,20 +15,19 @@ public final class ParsePortfolioPosition {
     private String instrumentType;
 
 
-    public static List<ParsePortfolioPosition> parse(List<PortfolioPosition> portfolioPositions, InvestApi api) {
+    public static List<ParsePortfolioPosition> parse(List<PortfolioPosition> portfolioPositions, InvestApi api, String token) {
         List<ParsePortfolioPosition> parsed = new ArrayList<>();
 
         for (PortfolioPosition portfolioPosition:portfolioPositions) {
-            parsed.add(new ParsePortfolioPosition(portfolioPosition, api));
+            parsed.add(new ParsePortfolioPosition(portfolioPosition, api, token));
         }
 
         return parsed;
     }
 
-    public ParsePortfolioPosition(PortfolioPosition portfolioPosition, InvestApi api) {
+    public ParsePortfolioPosition(PortfolioPosition portfolioPosition, InvestApi api, String token) {
         figi = portfolioPosition.getFigi();
-        price = portfolioPosition.getCurrentPrice().getUnits() + "," +
-                nanoToString(portfolioPosition.getCurrentPrice().getNano());
+        price = PriceInstruments.moneyValueToString(portfolioPosition.getCurrentPrice(), token);
 
         lots = portfolioPosition.getQuantity().getUnits();
 

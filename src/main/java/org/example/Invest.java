@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.models.Money;
+import org.example.utils.ParseOrderState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,7 @@ public class Invest {
     static final Logger log = LoggerFactory.getLogger(Invest.class);
 
 
-    public InvestApi getSandBoxApi(String token) {
+    public static InvestApi getSandBoxApi(String token) {
         InvestApi sandboxApi = InvestApi.createSandbox(token);
         log.info("SandboxApi created");
         return sandboxApi;
@@ -76,11 +77,39 @@ public class Invest {
     }
 
     public void payIn(String token, Money money) {
-        InvestApi api = this.getSandBoxApi(token);
+        InvestApi api = getSandBoxApi(token);
 
 
         api.getSandboxService().payIn(this.getAccount(token).get(money.getAccountId()).getId(), MoneyValue.newBuilder().setUnits(money.getValue()).setCurrency(money.getCurrency()).build());
 
+    }
+
+    public List<OrderState> getOrders(String token, Account acc) {
+        InvestApi api = getSandBoxApi(token);
+
+        List<OrderState> order = api.getSandboxService().getOrdersSync(acc.getId());
+
+        return order;
+    }
+
+    public static String findTickerByFigi(String figi, String token) {
+        InvestApi api = getSandBoxApi(token);
+
+        String ticker = api.getInstrumentsService().getInstrumentByFigiSync(figi).getTicker();
+
+        return ticker;
+    }
+
+    public static void main(String[] args) {
+        String token = "t.689sori3m0JEHD86Rejwl7Ewzp_53AD_TmuMFE8t7qWfoIJx2FNK9dWnCKCkzsT0iL-Plwt_tCljZVGcr4bqWQ";
+
+        Invest invest = new Invest();
+
+        List<OrderState> arr = invest.getOrders(token, invest.getAccount(token).get(0));
+
+        List<ParseOrderState> orders = ParseOrderState.parseOrderStateList(arr, token);
+
+        System.out.println(orders.get(0));
     }
 
 }
