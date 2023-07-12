@@ -65,6 +65,7 @@ public class InvestController {
 
         InvestApi api = invest.getSandBoxApi(user.getToken());
         Share share = invest.findShareByTicker(api, shareName);
+        List<Account> accounts = invest.getAccount(user.getToken());
 
         List<LastPrice> list = api.getMarketDataService().getLastPricesSync(Collections.singleton(share.getFigi()));
         Quotation price = list.get(0).getPrice();
@@ -75,6 +76,9 @@ public class InvestController {
         model.addAttribute("price", PriceInstruments.priceToString(price, share.getCurrency()));
         model.addAttribute("user", user);
         model.addAttribute("ticker", new Search(share.getTicker()));
+        model.addAttribute("idAcc", new Identifier(0));
+        model.addAttribute("count", 1);
+        model.addAttribute("len", accounts.size()-1);
 
         return "show";
     }
@@ -123,11 +127,12 @@ public class InvestController {
     }
 
     @PostMapping("/buy")
-    public String buyShare(@ModelAttribute("ticker") Search ticker, Principal principal, Model model) {
+    public String buyShare(@ModelAttribute("ticker") Search ticker, @ModelAttribute("idAcc") Identifier id,
+                           @ModelAttribute("count") int count, Principal principal, Model model) {
         model.addAttribute("isAuth", principal != null);
         User user = userService.findByUsername(principal.getName());
 
-        invest.buyShare(user.getToken(), ticker.getSearch(), 1);
+        invest.buyShare(user.getToken(), ticker.getSearch(), count, id.getId());
 
 
         return "redirect:/";

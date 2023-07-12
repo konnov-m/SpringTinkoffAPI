@@ -40,6 +40,12 @@ public class Invest {
         buyShare(token, ticker, quantity, acc);
     }
 
+    public void buyShare(String token, String ticker, long quantity, int idAcc) {
+        Account acc = getAccount(token).get(idAcc);
+
+        buyShare(token, ticker, quantity, acc);
+    }
+
     public void buyShare(String token, String ticker, long quantity, Account acc) {
         InvestApi api = getSandBoxApi(token);
 

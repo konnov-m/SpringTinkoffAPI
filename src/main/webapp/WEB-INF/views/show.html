@@ -21,8 +21,21 @@
 </div>
 
 <div class="container">
-  <form th:method="POST" th:action="@{/buy}" th:object="${ticker}">
-    <input class="form-control" id="search" aria-describedby="stockHelp" th:field="*{search}" type="hidden">
+  <form th:method="POST" th:action="@{/buy}">
+    <div class="mb-3">
+      <input class="form-control" name="search" id="search" aria-describedby="stockHelp" th:field="*{ticker.search}" type="hidden">
+    </div>
+
+    <div class="mb-3">
+      <input class="form-control" name="count" id="count" aria-describedby="stockHelp" th:value="*{count}" type="number" min="1" step="1">
+    </div>
+
+    <div class="mb-3">
+    <select name="idAcc" th:field="*{idAcc.id}" class="form-select">
+      <option th:each="i:${#numbers.sequence(0, len)}" th:value="${i}" th:text="${i}">
+      </option>
+    </select>
+    </div>
     <button type="submit" class="btn btn-primary">Buy</button>
   </form>
 </div>
