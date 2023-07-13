@@ -1,5 +1,6 @@
 package org.example.controllers;
 
+import org.example.Invest;
 import org.example.dao.RolesDao;
 import org.example.dao.UserDao;
 import org.example.models.Role;
@@ -31,6 +32,8 @@ public class UserController {
 
     private RolesDao rolesDao;
 
+    private Invest invest;
+
     @Autowired
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
@@ -44,6 +47,11 @@ public class UserController {
     @Autowired
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Autowired
+    public void setInvestApi(Invest invest) {
+        this.invest = invest;
     }
 
     @GetMapping("/login")
@@ -69,8 +77,10 @@ public class UserController {
 
     @GetMapping("/signup")
     public String signupGet(@RequestParam(value = "usernameExist", required = false) String usernameExist,
+                            @RequestParam(value = "invalidToken", required = false) String invalidToken,
             @ModelAttribute("user") User user, Model model) {
         model.addAttribute("usernameExist", usernameExist != null);
+        model.addAttribute("invalidToken", invalidToken != null);
 
         return "signup";
     }
@@ -85,6 +95,12 @@ public class UserController {
         if (userDao.getUser(user.getUsername()) != null) {
             return "redirect:/signup?usernameExist";
         }
+
+        if (!invest.isValidSandboxApi(user.getToken())) {
+            return "redirect:/signup?invalidToken";
+        }
+
+
 
         Role role = rolesDao.getRole("ROLE_USER");
 

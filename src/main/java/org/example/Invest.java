@@ -22,6 +22,22 @@ public class Invest {
         return sandboxApi;
     }
 
+    public boolean isValidSandboxApi(String token) {
+        InvestApi api = InvestApi.createSandbox(token);
+
+        try {
+            Share share = this.findShareByTicker(api, "AAPL");
+
+            log.info(share.getFigi());
+        } catch (Exception ex) {
+            log.info("token invalid");
+            return false;
+        }
+        log.info("token valid");
+
+        return true;
+    }
+
     public List<Account> getAccount(String token) {
         return getSandBoxApi(token).getSandboxService().getAccountsSync();
     }
