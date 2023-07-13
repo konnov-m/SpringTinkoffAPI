@@ -13,6 +13,9 @@
 <div th:replace="header :: content"></div>
 
 <div class="container">
+
+    <div th:if="${invalidToken}" class="alert alert-danger" role="alert">Invalid token! Update your token.</div>
+
   <form method="post" th:action="@{/update}" th:object="${user}">
     <input name="${_csrf.parameterName}" value="${_csrf.token}" type="hidden">
     <div class="mb-3">

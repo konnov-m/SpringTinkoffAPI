@@ -63,6 +63,10 @@ public class InvestController {
     public String show(@RequestParam(value = "search") String shareName, Model model, Principal principal) {
         User user = userService.findByUsername(principal.getName());
 
+        if (!invest.isValidSandboxApi(user.getToken())) {
+            return "redirect:/update?invalidToken";
+        }
+
         InvestApi api = invest.getSandBoxApi(user.getToken());
         Share share = invest.findShareByTicker(api, shareName);
         List<Account> accounts = invest.getAccount(user.getToken());
@@ -99,6 +103,13 @@ public class InvestController {
     public String accounts(@RequestParam(value = "id", defaultValue = "0") int id, Model model, Principal principal) {
         model.addAttribute("isAuth", principal != null);
         User user = userService.findByUsername(principal.getName());
+
+
+        if (!invest.isValidSandboxApi(user.getToken())) {
+            return "redirect:/update?invalidToken";
+        }
+
+
         List<Account> accounts = invest.getAccount(user.getToken());
         InvestApi api = invest.getSandBoxApi(user.getToken());
 
@@ -112,6 +123,7 @@ public class InvestController {
         List<ParseOrderState> orders = ParseOrderState.parseOrderStateList(invest.getOrders(user.getToken(), accounts.get(id)), user.getToken());
 
         positionsList.removeIf(x -> !x.getInstrumentType().equals("share"));
+
 
         model.addAttribute("moneyList", positionsResponse.getMoneyList());
         model.addAttribute("positionsList", positionsList);
@@ -141,8 +153,14 @@ public class InvestController {
     @GetMapping("/payin")
     public String payIn(Model model, Principal principal) {
         model.addAttribute("isAuth", principal != null);
-
         User user = userService.findByUsername(principal.getName());
+
+
+        if (!invest.isValidSandboxApi(user.getToken())) {
+            return "redirect:/update?invalidToken";
+        }
+
+
         List<Account> accounts = invest.getAccount(user.getToken());
 
         model.addAttribute("Money", new Money());

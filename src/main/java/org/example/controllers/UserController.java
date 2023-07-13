@@ -113,9 +113,11 @@ public class UserController {
     }
 
     @GetMapping("/update")
-    public String updateGet(Principal principal, Model model) {
+    public String updateGet(@RequestParam(value = "invalidToken", required = false) String invalidToken,
+                            Principal principal, Model model) {
         model.addAttribute("isAuth", principal != null);
         model.addAttribute("user", userDao.getUser(principal.getName()));
+        model.addAttribute("invalidToken", invalidToken != null);
 
         return "update";
     }
