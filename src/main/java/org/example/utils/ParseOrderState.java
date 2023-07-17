@@ -2,6 +2,7 @@ package org.example.utils;
 
 
 import org.example.Invest;
+import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderState;
 
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ public class ParseOrderState {
     private String instrumentType;
 
     private String orderId;
+
+    private OrderDirection direction;
 
     public static List<ParseOrderState> parseOrderStateList(List<OrderState> orders, String token) {
         List<ParseOrderState> parsed = new ArrayList<>();
@@ -34,6 +37,7 @@ public class ParseOrderState {
         this.lots = orderState.getLotsRequested();
         this.instrumentType = orderState.getInstrumentUid();
         this.orderId = orderState.getOrderId();
+        this.direction = orderState.getDirection();
 
         this.ticker = Invest.findTickerByFigi(figi, token);
     }
@@ -89,6 +93,14 @@ public class ParseOrderState {
         this.orderId = orderId;
     }
 
+    public OrderDirection getDirection() {
+        return direction;
+    }
+
+    public void setDirection(OrderDirection direction) {
+        this.direction = direction;
+    }
+
     @Override
     public String toString() {
         return "ParseOrderState{" +
@@ -97,6 +109,8 @@ public class ParseOrderState {
                 ", price='" + price + '\'' +
                 ", lots=" + lots +
                 ", instrumentType='" + instrumentType + '\'' +
+                ", orderId='" + orderId + '\'' +
+                ", direction=" + direction +
                 '}';
     }
 }

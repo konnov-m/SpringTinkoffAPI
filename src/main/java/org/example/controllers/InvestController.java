@@ -23,7 +23,6 @@ import ru.tinkoff.piapi.core.InvestApi;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -122,15 +121,20 @@ public class InvestController {
 
         List<ParseOrderState> orders = ParseOrderState.parseOrderStateList(invest.getOrders(user.getToken(), accounts.get(id)), user.getToken());
 
+        List<ParseOrderState> ordersToBuy = orders.stream().filter(s -> s.getDirection() == OrderDirection.ORDER_DIRECTION_BUY).toList();
+        List<ParseOrderState> ordersToSell = orders.stream().filter(s -> s.getDirection() == OrderDirection.ORDER_DIRECTION_SELL).toList();
+
         positionsList.removeIf(x -> !x.getInstrumentType().equals("share"));
 
 
         model.addAttribute("moneyList", positionsResponse.getMoneyList());
         model.addAttribute("positionsList", positionsList);
-        model.addAttribute("orders", new ArrayList<>(orders));
+        model.addAttribute("ordersToBuy", ordersToBuy);
+        model.addAttribute("ordersToSell", ordersToSell);
         model.addAttribute("len", accounts.size()-1);
         model.addAttribute("idAcc", new Identifier(id));
-        model.addAttribute("ordersNotNull", orders.size() != 0);
+        model.addAttribute("ordersToBuyNotNull", ordersToBuy.size() != 0);
+        model.addAttribute("ordersToSellNotNull", ordersToSell.size() != 0);
         model.addAttribute("positionsNotNull", positionsList.size() != 0);
         model.addAttribute("order", new ParseOrderState());
 
@@ -186,12 +190,27 @@ public class InvestController {
             return "redirect:/accounts";
         }
 
-        log.info("id is " + id);
-
         User user = userService.findByUsername(principal.getName());
         Account acc = invest.getAccount(user.getToken()).get(id);
 
         invest.cancelOrder(user.getToken(), acc.getId(), order.getOrderId());
+
+        return "redirect:/accounts";
+    }
+
+    @PostMapping("/accounts/sell")
+    public String sell(@ModelAttribute("Ticker") String ticker,
+                       @ModelAttribute("idAcc") int id, @ModelAttribute("countToSell") int count,
+                       Principal principal, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "redirect:/accounts";
+        }
+
+        User user = userService.findByUsername(principal.getName());
+
+        invest.sell(user.getToken(), ticker, count, id);
+
 
         return "redirect:/accounts";
     }

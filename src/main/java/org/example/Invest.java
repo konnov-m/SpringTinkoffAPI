@@ -128,4 +128,34 @@ public class Invest {
         log.info("Order canceled");
     }
 
+    public void sell(String token, String ticker, long quantity, int idAcc) {
+        Account acc = getAccount(token).get(idAcc);
+
+        sell(token, ticker, quantity, acc);
+    }
+
+    public void sell(String token, String ticker, long quantity, Account acc) {
+        InvestApi api = getSandBoxApi(token);
+
+        String figi = findShareByTicker(api, ticker).getFigi();
+
+
+        Quotation lastPrice = api.getMarketDataService().getLastPricesSync(List.of(figi)).get(0).getPrice();
+        Quotation price = Quotation.newBuilder().setUnits(lastPrice.getUnits())
+                .setNano(lastPrice.getNano()).build();
+
+
+        PostOrderResponse orderId = api.getSandboxService().postOrderSync(figi, quantity, price,
+                OrderDirection.ORDER_DIRECTION_SELL, acc.getId(),
+                OrderType.ORDER_TYPE_LIMIT, UUID.randomUUID().toString());
+
+
+        OrderState order = api.getSandboxService().getOrderStateSync(acc.getId(), orderId.getOrderId());
+        if (order != null ) {
+            log.info("Request with id {} is in list", order);
+        } else {
+            log.info("Request with id {} isn't in list", order);
+        }
+    }
+
 }

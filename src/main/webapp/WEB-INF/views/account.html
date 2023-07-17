@@ -51,17 +51,28 @@
           <td>Ticker</td>
           <td>Price</td>
           <td>Lots</td>
+          <td>Sell</td>
         </tr>
 
         <tr th:each="position: ${positionsList}">
           <td th:text="${position.Ticker}" />
           <td th:text="${position.Price}" />
           <td th:text="${position.Lots}" />
+          <td>
+            <form th:method="POST" th:action="@{/accounts/sell}">
+              <input class="form-control" name="Ticker" id="Ticker" aria-describedby="stockHelp" th:value="*{position.Ticker}" type="hidden">
+              <input class="form-control" name="idAcc" id="idAccSell" aria-describedby="stockHelp" th:value="*{idAcc.id}" type="hidden">
+              <div class="mb-3">
+                <input class="form-control" name="countToSell" id="countToSell" aria-describedby="stockHelp" th:value="*{idAcc.id}" type="number" min="1" step="1" th:max="${position.Lots}">
+              </div>
+              <button type="submit" class="btn btn-danger">Sell</button>
+            </form>
+          </td>
         </tr>
       </table>
 
-      <p th:if="${ordersNotNull}">Orders:</p>
-      <table th:if="${ordersNotNull}" class="table table-striped">
+      <p th:if="${ordersToBuyNotNull}">Orders to buy:</p>
+      <table th:if="${ordersToBuyNotNull}" class="table table-striped">
         <tr>
           <td>Ticker</td>
           <td>Price</td>
@@ -69,7 +80,7 @@
           <td>Cancel order</td>
         </tr>
 
-        <tr th:each="order : ${orders}">
+        <tr th:each="order : ${ordersToBuy}">
           <td th:text="${order.Ticker}" />
           <td th:text="${order.Price}" />
           <td th:text="${order.Lots}" />
@@ -77,6 +88,31 @@
             <form th:method="POST" th:action="@{/accounts/cancel_order}">
               <input class="form-control" name="orderId" id="orderId" aria-describedby="stockHelp" th:value="*{order.orderId}" type="hidden">
               <input class="form-control" name="idAcc" id="idAcc" aria-describedby="stockHelp" th:value="*{idAcc.id}" type="hidden">
+              <button type="submit" class="btn btn-danger">Cancel</button>
+            </form>
+          </td>
+        </tr>
+
+
+      </table>
+
+      <p th:if="${ordersToSellNotNull}">Orders to sell:</p>
+      <table th:if="${ordersToSellNotNull}" class="table table-striped">
+        <tr>
+          <td>Ticker</td>
+          <td>Price</td>
+          <td>Lots</td>
+          <td>Cancel order</td>
+        </tr>
+
+        <tr th:each="order : ${ordersToSell}">
+          <td th:text="${order.Ticker}" />
+          <td th:text="${order.Price}" />
+          <td th:text="${order.Lots}" />
+          <td>
+            <form th:method="POST" th:action="@{/accounts/cancel_order}">
+              <input class="form-control" name="orderId" id="orderSellId" aria-describedby="stockHelp" th:value="*{order.orderId}" type="hidden">
+              <input class="form-control" name="idAcc" id="SellIdAcc" aria-describedby="stockHelp" th:value="*{idAcc.id}" type="hidden">
               <button type="submit" class="btn btn-danger">Cancel</button>
             </form>
           </td>
