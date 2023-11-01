@@ -42,6 +42,12 @@ public class Invest {
         return getSandBoxApi(token).getSandboxService().getAccountsSync();
     }
 
+    public String createAccount(String token) {
+        log.info("Create account");
+        return getSandBoxApi(token).getSandboxService().openAccountSync();
+    }
+
+
     public PositionsResponse getPositionsResponse(String token, String accountId) {
         return getSandBoxApi(token).getSandboxService().getPositionsSync(accountId);
     }

@@ -112,6 +112,11 @@ public class InvestController {
         List<Account> accounts = invest.getAccount(user.getToken());
         InvestApi api = invest.getSandBoxApi(user.getToken());
 
+        if (accounts.isEmpty()) {
+            invest.createAccount(user.getToken());
+            accounts = invest.getAccount(user.getToken());
+        }
+
         PositionsResponse positionsResponse = invest.getPositionsResponse(user.getToken(),
                 accounts.get(id).getId());
 
