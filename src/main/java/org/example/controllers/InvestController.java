@@ -68,7 +68,7 @@ public class InvestController {
 
         InvestApi api = invest.getSandBoxApi(user.getToken());
         Share share = invest.findShareByTicker(api, shareName);
-        List<Account> accounts = invest.getAccount(user.getToken());
+        List<Account> accounts = invest.getAccountsNotEmpty(user.getToken());
 
         List<LastPrice> list = api.getMarketDataService().getLastPricesSync(Collections.singleton(share.getFigi()));
         Quotation price = list.get(0).getPrice();
@@ -109,13 +109,9 @@ public class InvestController {
         }
 
 
-        List<Account> accounts = invest.getAccount(user.getToken());
+        List<Account> accounts = invest.getAccountsNotEmpty(user.getToken());
         InvestApi api = invest.getSandBoxApi(user.getToken());
 
-        if (accounts.isEmpty()) {
-            invest.createAccount(user.getToken());
-            accounts = invest.getAccount(user.getToken());
-        }
 
         PositionsResponse positionsResponse = invest.getPositionsResponse(user.getToken(),
                 accounts.get(id).getId());
@@ -170,7 +166,7 @@ public class InvestController {
         }
 
 
-        List<Account> accounts = invest.getAccount(user.getToken());
+        List<Account> accounts = invest.getAccountsNotEmpty(user.getToken());
 
         model.addAttribute("Money", new Money());
         model.addAttribute("Currencies", PriceInstruments.currencyMap.keySet());
@@ -196,7 +192,7 @@ public class InvestController {
         }
 
         User user = userService.findByUsername(principal.getName());
-        Account acc = invest.getAccount(user.getToken()).get(id);
+        Account acc = invest.getAccounts(user.getToken()).get(id);
 
         invest.cancelOrder(user.getToken(), acc.getId(), order.getOrderId());
 

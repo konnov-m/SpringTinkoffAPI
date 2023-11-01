@@ -38,13 +38,31 @@ public class Invest {
         return true;
     }
 
-    public List<Account> getAccount(String token) {
+    public List<Account> getAccounts(String token) {
         return getSandBoxApi(token).getSandboxService().getAccountsSync();
+    }
+
+    public List<Account> getAccountsNotEmpty(String token) {
+        InvestApi api = getSandBoxApi(token);
+
+        List<Account> accounts = api.getSandboxService().getAccountsSync();
+
+        if (accounts.isEmpty()) {
+            createAccount(api);
+            accounts = api.getSandboxService().getAccountsSync();
+        }
+
+        return accounts;
     }
 
     public String createAccount(String token) {
         log.info("Create account");
         return getSandBoxApi(token).getSandboxService().openAccountSync();
+    }
+
+    public String createAccount(InvestApi api) {
+        log.info("Create account");
+        return api.getSandboxService().openAccountSync();
     }
 
 
@@ -53,17 +71,17 @@ public class Invest {
     }
 
     public PortfolioResponse getPortfolio(String token, int accountId) {
-        return getSandBoxApi(token).getSandboxService().getPortfolioSync(getAccount(token).get(accountId).getId());
+        return getSandBoxApi(token).getSandboxService().getPortfolioSync(getAccounts(token).get(accountId).getId());
     }
 
     public void buyShare(String token, String ticker, long quantity) {
-        Account acc = getAccount(token).get(0);
+        Account acc = getAccounts(token).get(0);
 
         buyShare(token, ticker, quantity, acc);
     }
 
     public void buyShare(String token, String ticker, long quantity, int idAcc) {
-        Account acc = getAccount(token).get(idAcc);
+        Account acc = getAccounts(token).get(idAcc);
 
         buyShare(token, ticker, quantity, acc);
     }
@@ -107,7 +125,7 @@ public class Invest {
         InvestApi api = getSandBoxApi(token);
 
 
-        api.getSandboxService().payIn(this.getAccount(token).get(money.getAccountId()).getId(), MoneyValue.newBuilder().setUnits(money.getValue()).setCurrency(money.getCurrency()).build());
+        api.getSandboxService().payIn(this.getAccounts(token).get(money.getAccountId()).getId(), MoneyValue.newBuilder().setUnits(money.getValue()).setCurrency(money.getCurrency()).build());
 
     }
 
@@ -135,7 +153,7 @@ public class Invest {
     }
 
     public void sell(String token, String ticker, long quantity, int idAcc) {
-        Account acc = getAccount(token).get(idAcc);
+        Account acc = getAccounts(token).get(idAcc);
 
         sell(token, ticker, quantity, acc);
     }
