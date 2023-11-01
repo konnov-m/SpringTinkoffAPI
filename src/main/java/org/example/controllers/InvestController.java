@@ -93,7 +93,7 @@ public class InvestController {
         User user = userService.findByUsername(principal.getName());
 
         //Create account
-        invest.getSandBoxApi(user.getToken()).getSandboxService().openAccountSync();
+        invest.createAccount(user.getToken());
 
         return "redirect:/accounts";
     }
