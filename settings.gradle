@@ -1,4 +1,0 @@
-rootProject.name = 'SpringTinkoffAPI'
-include 'Invest'
-include 'web'
-

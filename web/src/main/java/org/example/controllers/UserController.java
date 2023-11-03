@@ -101,7 +101,6 @@ public class UserController {
         }
 
 
-
         Role role = rolesDao.getRole("ROLE_USER");
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
