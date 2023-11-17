@@ -7,6 +7,8 @@ services:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - specific-network-name
 
   # reachable on 9092 from the host and on 29092 from inside docker compose
   kafka:
@@ -24,6 +26,8 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: '1'
       KAFKA_MIN_INSYNC_REPLICAS: '1'
+    networks:
+      - specific-network-name
 
   init-kafka:
     image: confluentinc/cp-kafka:6.1.1
@@ -42,3 +46,8 @@ services:
       echo -e 'Successfully created the following topics:'
       kafka-topics --bootstrap-server kafka:29092 --list
       "
+
+networks:
+  specific-network-name:
+    external: false
+    name: specific-network-name

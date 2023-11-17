@@ -2,6 +2,10 @@ package org.example.controllers;
 
 import org.example.Invest;
 import org.example.dao.UserDao;
+import org.example.kafka.consumer.MyConsumer;
+import org.example.kafka.producer.DataSender;
+import org.example.kafka.producer.MyProducer;
+import org.example.kafka.producer.Request;
 import org.example.models.Identifier;
 import org.example.models.Money;
 import org.example.models.Search;
@@ -25,8 +29,10 @@ import ru.tinkoff.piapi.core.InvestApi;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Controller
 public class InvestController {
@@ -37,6 +43,12 @@ public class InvestController {
     private UserDao userDao;
 
     private UserService userService;
+
+    private static DataSender dataProducer;
+
+    private static MyProducer producer;
+
+    private static MyConsumer consumer;
 
     @Autowired
     public InvestController(Invest invest) {
@@ -53,6 +65,14 @@ public class InvestController {
         this.userDao = userDao;
     }
 
+
+    static {
+        producer = new MyProducer();
+
+        dataProducer = new DataSender(producer, stringValue -> log.info("asked, value:{}", stringValue));
+    }
+
+
     @GetMapping("/")
     public String search(@ModelAttribute("search") Search search, Principal principal, Model model) {
         model.addAttribute("isAuth", principal != null);
@@ -68,8 +88,12 @@ public class InvestController {
             return "redirect:/update?invalidToken";
         }
 
+        log.info("Request from kafka");
+        Request req = new Request("findShareByTicker", List.of(new String[]{user.getToken(), shareName}));
+        dataProducer.dataHandler(req);
+
         InvestApi api = invest.getSandBoxApi(user.getToken());
-        Share share = invest.findShareByTicker(api, shareName);
+        Share share = invest.findShareByTicker(user.getToken(), shareName);
         List<Account> accounts = invest.getAccountsNotEmpty(user.getToken());
 
         List<LastPrice> list = api.getMarketDataService().getLastPricesSync(Collections.singleton(share.getFigi()));

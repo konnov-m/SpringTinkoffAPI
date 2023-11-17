@@ -8,6 +8,8 @@ services:
       - "8080:8080"
     depends_on:
       - db
+    networks:
+      - specific-network-name
 
   db:
     image: postgres:15
@@ -21,4 +23,9 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: tinkoff
+    networks:
+      - specific-network-name
 
+networks:
+  specific-network-name:
+    external: true

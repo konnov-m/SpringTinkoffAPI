@@ -116,7 +116,7 @@ public class Invest {
                 filter(s -> s.getTicker().equals(ticker)).findFirst().orElse(null);
     }
 
-    public Share findShareByTicker(InvestApi api, String ticker) {
+    private Share findShareByTicker(InvestApi api, String ticker) {
         return api.getInstrumentsService().getAllSharesSync().stream().
                 filter(s -> s.getTicker().equals(ticker)).findFirst().orElse(null);
     }
@@ -124,9 +124,7 @@ public class Invest {
     public void payIn(String token, Money money) {
         InvestApi api = getSandBoxApi(token);
 
-
         api.getSandboxService().payIn(this.getAccounts(token).get(money.getAccountId()).getId(), MoneyValue.newBuilder().setUnits(money.getValue()).setCurrency(money.getCurrency()).build());
-
     }
 
     public List<OrderState> getOrders(String token, Account acc) {
