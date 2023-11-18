@@ -3,3 +3,9 @@ services:
   java:
     build:
       dockerfile: Dockerfile
+    networks:
+      - specific-network-name
+
+networks:
+  specific-network-name:
+    external: true
