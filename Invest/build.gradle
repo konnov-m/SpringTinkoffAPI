@@ -17,6 +17,7 @@ dependencies {
     implementation 'ru.tinkoff.piapi:java-sdk-core:' + tinkoffVersion
     implementation 'org.slf4j:slf4j-simple:' + slf4jVersion
     implementation 'org.apache.kafka:kafka-clients:3.6.0'
+    implementation 'com.google.protobuf:protobuf-java-util:3.24.4'
 
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'

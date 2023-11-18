@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.kafka.consumer.Request;
 import org.example.models.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,6 +119,11 @@ public class Invest {
     public Share findShareByTicker(InvestApi api, String ticker) {
         return api.getInstrumentsService().getAllSharesSync().stream().
                 filter(s -> s.getTicker().equals(ticker)).findFirst().orElse(null);
+    }
+
+    public Share findShareByTicker(Request req) {
+        return getSandBoxApi(req.params().get(0)).getInstrumentsService().getAllSharesSync().stream().
+                filter(s -> s.getTicker().equals(req.params().get(1))).findFirst().orElse(null);
     }
 
     public void payIn(String token, Money money) {

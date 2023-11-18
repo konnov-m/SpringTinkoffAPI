@@ -21,7 +21,9 @@ public class MyProducer {
 
     public static final String TOPIC_NAME = "topicInvestToApp";
 
-    public MyProducer(String bootstrapServers) {
+    public static final String bootstrapServers = "kafka:29092";
+
+    public MyProducer() {
         Properties props = new Properties();
         props.put(CLIENT_ID_CONFIG, "myKafkaProducer");
         props.put(BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);

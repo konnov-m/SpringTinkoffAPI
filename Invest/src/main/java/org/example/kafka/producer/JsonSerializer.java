@@ -1,8 +1,13 @@
 package org.example.kafka.producer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+
+import com.google.protobuf.GeneratedMessageV3;
+import com.google.protobuf.util.JsonFormat;
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Serializer;
 
@@ -25,10 +30,14 @@ public class JsonSerializer<T> implements Serializer<T> {
             if (data == null) {
                 return new byte[] {};
             } else {
-                return mapper.writeValueAsString(data).getBytes(encoding);
+                return toJson((GeneratedMessageV3) data).getBytes();
             }
         } catch (Exception e) {
             throw new SerializationException("Error when serializing StringValue to byte[] ", e);
         }
+    }
+
+    public static String toJson(GeneratedMessageV3 messageOrBuilder) throws IOException {
+        return JsonFormat.printer().print(messageOrBuilder);
     }
 }

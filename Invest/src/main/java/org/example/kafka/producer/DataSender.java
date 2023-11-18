@@ -29,7 +29,7 @@ public class DataSender {
         try {
             myProducer
                     .getMyProducer()
-                    .send(new ProducerRecord<>(TOPIC_NAME, ID.getAndIncrement(), value), (metadata, exception) -> {
+                    .send(new ProducerRecord<>(TOPIC_NAME, ID.get(), value), (metadata, exception) -> {
                         if (exception != null) {
                             log.error("message wasn't sent", exception);
                         } else {

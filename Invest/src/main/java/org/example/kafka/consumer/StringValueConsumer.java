@@ -1,10 +1,15 @@
 package org.example.kafka.consumer;
 
+import com.google.protobuf.GeneratedMessageV3;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.example.Invest;
+import org.example.kafka.producer.DataSender;
+import org.example.kafka.producer.MyProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -20,6 +25,18 @@ public class StringValueConsumer {
     private final Duration timeout = Duration.ofMillis(2_000);
     private final Consumer<Request> dataConsumer;
     private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+
+    static private final Invest invest = new Invest();
+
+    private static DataSender dataProducer;
+
+    private static MyProducer producer;
+
+    static {
+        producer = new MyProducer();
+
+        dataProducer = new DataSender(producer, stringValue -> log.info("asked, value:{}", stringValue));
+    }
 
     public StringValueConsumer(MyConsumer myConsumer, Consumer<Request> dataConsumer) {
         this.myConsumer = myConsumer;
@@ -41,6 +58,12 @@ public class StringValueConsumer {
                 var key = kafkaRecord.key();
                 var value = kafkaRecord.value();
                 log.info("key:{}, value:{}, record:{}", key, value, kafkaRecord);
+
+                Method method = invest.getClass().getMethod(value.func(), Request.class);
+                GeneratedMessageV3 msgToSend = (GeneratedMessageV3) method.invoke(invest, value);
+                dataProducer.dataHandler(msgToSend);
+
+
                 dataConsumer.accept(value);
             } catch (Exception ex) {
                 log.error("can't parse record:{}", kafkaRecord, ex);

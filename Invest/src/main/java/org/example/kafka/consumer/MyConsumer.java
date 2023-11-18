@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.LongDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.util.Collections;
@@ -19,6 +21,9 @@ import static org.example.kafka.consumer.JsonDeserializer.OBJECT_MAPPER;
 import static org.example.kafka.consumer.JsonDeserializer.TYPE_REFERENCE;
 
 public class MyConsumer {
+
+    static final Logger log = LoggerFactory.getLogger(MyConsumer.class);
+
     private final Random random = new Random();
     private final KafkaConsumer<Long, Request> kafkaConsumer;
 
