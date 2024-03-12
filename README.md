@@ -2,6 +2,20 @@
 
 В проекте реализовано: регистрация, авторизация, связь с базой данных, поиск по акциям, покупка и продажа акций отдельно на каждый аккаунт, отмена покупки или продажи, просмотра портфеля через Tinkoff API.
 
+## Build
+Собираем war файл
+```
+./gradlew war
+```
+Дальше запускаем docker
+```
+docker-compose up
+```
+И подключаем по ссылке http://localhost:8080/tinkoff/
+Если нужно запустить локально нужно изменить переменные в [persistence-pg.properties](src%2Fmain%2Fwebapp%2Fpersistence-pg.properties)
+и [hibernate.cfg.xml](src%2Fmain%2Fresources%2Fhibernate.cfg.xml). Поменять ссылку на выша базу данных.
+
+## База данных
 Команды для создания базы данных:
 ```sql
 CREATE DATABASE tinkoff;

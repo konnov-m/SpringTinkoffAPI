@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:15
+    restart: always
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5430:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: tinkoff
+    networks:
+      - specific-network-name
+
+  java:
+    restart: always
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - specific-network-name
+
+networks:
+  specific-network-name:
+    external: false
+    name: specific-network-name

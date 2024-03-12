@@ -3,8 +3,9 @@ plugins {
     id 'war'
 }
 
+archivesBaseName = 'tinkoff'
+
 group 'org.example'
-version '1.0'
 
 def springVersion = '5.3.24'
 def springSecurityVersion = '5.3.13.RELEASE'
